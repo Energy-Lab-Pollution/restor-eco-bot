@@ -2,10 +2,8 @@
 # Author - Federico Dominguez Molina
 # Description - This class is used to manage the driver and browser instances
 
-import os
-import sys
+
 import selenium
-from selenium import webdriver
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome import webdriver as chrome_webdriver
 from selenium.webdriver.common.by import By
@@ -50,7 +48,9 @@ class DriverManager:
             "safebrowsing.enabled": False,
             "safebrowsing.disable_download_protection": True,
             # Set "enabled": False if you want authomatic downloads.
-            "plugins.plugins_list": [{"enabled": False, "name": "Chrome PDF Viewer"}],
+            "plugins.plugins_list": [
+                {"enabled": False, "name": "Chrome PDF Viewer"}
+            ],
         }
 
         chrome_options.add_argument("--ignore-certificate-errors")

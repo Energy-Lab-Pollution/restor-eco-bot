@@ -9,10 +9,13 @@ from util.constants import API, HEADERS
 
 api = API.replace("x", "1").replace("y", "30")
 path = api.split("/")
-path = path
+path = path[3:]
+path = "/".join(path)
 
+headers = HEADERS.copy()
+headers["path"] = path
 
 print(api)
 print(path)
-r = requests.post(api, headers=HEADERS)
-print(r.content)
+r = requests.get(api, headers=headers)
+# print(r.content)

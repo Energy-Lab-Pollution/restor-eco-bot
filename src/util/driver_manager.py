@@ -12,23 +12,17 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.service import Service
 
-
-# Number of seconds to wait before a timeout error is raised
-TIMEOUT = 10
+# Local imports
+from util.constants import TIMEOUT
 
 
 class DriverManager:
-    def __init__(self, localtest, headless, download_location, pdfs_path):
+    TIMEOUT = TIMEOUT
+
+    def __init__(self, localtest, headless, download_location):
         self.localtest = localtest
         self.download_location = download_location
         self.headless = headless
-        if self.localtest:
-            self.pdfs_path = "C:/Users/fdmol/Downloads"
-        else:
-            self.pdfs_path = pdfs_path
-            # Change driver permission
-            # os.chmod(self.download_location, 777)
-            # print("Changed permission")
         self.driver = self._get_chrome_driver()
         self.action = ActionChains(self.driver)
 
@@ -101,13 +95,13 @@ class DriverManager:
         Función que recibe un xpath, un driver y lo que hace es darle click
         al elemento asociado a dicho xpath
         """
-        button = WebDriverWait(self.driver, TIMEOUT).until(
+        button = WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
         # button = self.driver.find_element_by_xpath(xpath)
 
         try:
-            button = WebDriverWait(self.driver, TIMEOUT).until(
+            button = WebDriverWait(self.driver, self.TIMEOUT).until(
                 EC.element_to_be_clickable((By.XPATH, xpath))
             )
             print("Hovering to button")
@@ -125,7 +119,7 @@ class DriverManager:
         Función que recibe un id, un driver y lo que hace es darle click
         al elemento asociado a dicho id
         """
-        WebDriverWait(self.driver, TIMEOUT).until(
+        WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.ID, iden))
         )
         # button = self.driver.find_element_by_id(iden)
@@ -151,13 +145,13 @@ class DriverManager:
         text_box.send_keys(text)
 
     def get_text(self, xpath):
-        WebDriverWait(self.driver, TIMEOUT).until(
+        WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
         return self.driver.find_element(by=By.XPATH, value=xpath).text
 
     def get_text_or_value(self, xpath):
-        WebDriverWait(self.driver, TIMEOUT).until(
+        WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
         element = self.driver.find_element(by=By.XPATH, value=xpath)
@@ -168,7 +162,7 @@ class DriverManager:
             return element.text
 
     def get_texts(self, xpath):
-        WebDriverWait(self.driver, TIMEOUT).until(
+        WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
         texts = self.driver.find_elements(by=By.XPATH, value=xpath)
@@ -177,7 +171,7 @@ class DriverManager:
 
     def is_clickable(self, id):
         try:
-            WebDriverWait(self.driver, TIMEOUT).until(
+            WebDriverWait(self.driver, self.TIMEOUT).until(
                 EC.element_to_be_clickable((By.XPATH, id))
             )
             return True

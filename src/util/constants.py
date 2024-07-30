@@ -3,7 +3,8 @@ Script with constaants used throughout the project
 """
 
 URL = "https://restor.eco/organizations/?lat=26&lng=14.23&zoom=3"
-
+# Number of seconds to wait before a timeout error is raised
+TIMEOUT = 10
 HEADERS = {
     "authority": "restor2-prod-1-api.restor.eco",
     "method": "POST",

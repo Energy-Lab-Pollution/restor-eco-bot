@@ -1,3 +1,7 @@
+"""
+Script with constaants used throughout the project
+"""
+
 API = "https://restor2-prod-1-api.restor.eco/search/1/organizations/search?page=x&size=y&sort=isFeatured%3Adesc"
 
 HEADERS = {

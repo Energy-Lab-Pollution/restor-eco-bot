@@ -56,11 +56,11 @@ class RestoreEcoScraper:
         print(f"Going to webpage: {self.URL}")
         self.chrome_driver.get_page(self.URL)
 
-    def hover_to_org(self):
+    def hover_to_org(self, num_element):
         """
         Hovers to a given org in the webpage
         """
-        xpath = "/html/body/div[1]/div/div[2]/aside/div/div/div/div/div[2]/div/ul/li[10]/a/article/div/span[2]"
+        xpath = f"/html/body/div[1]/div/div[2]/aside/div/div/div/div/div[2]/div/ul/li[{num_element}]/a/article/div/span[2]"
         self.chrome_driver.hover_by_xpath(xpath)
 
     def extract_available_orgs(self):

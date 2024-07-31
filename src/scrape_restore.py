@@ -2,10 +2,11 @@
 Script that contains the code to scrape the Restor-Eco page
 """
 
+import re
 import os
 import time
 
-from util.constants import URL
+from util.constants import URL, DEFAULT_TOTAL_ORGS
 from bs4 import BeautifulSoup
 from util.driver_manager import DriverManager
 
@@ -31,6 +32,7 @@ else:
 class RestoreEcoScraper:
     LOCAL_TEST = LOCAL_TEST
     URL = URL
+    DEFAULT_TOTAL_ORGS = DEFAULT_TOTAL_ORGS
 
     def __init__(self):
         if self.LOCAL_TEST:
@@ -55,6 +57,33 @@ class RestoreEcoScraper:
         """
         print(f"Going to webpage: {self.URL}")
         self.chrome_driver.get_page(self.URL)
+
+    def get_total_number_of_orgs(self):
+        """
+        Gets the total number of orgs in the page
+        """
+
+        try:
+            html = self.chrome_driver.driver.page_source
+            soup = BeautifulSoup(html, "html.parser")
+
+            number_paragraph = soup.find("h2", {"class": "paragraph-md"})
+            raw_text = number_paragraph.text
+            raw_text = raw_text.replace(",", "")
+
+            number = re.findall(r"\d+", raw_text)
+
+            if number:
+                self.total_orgs = number[0]
+
+            else:
+                self.total_orgs = self.DEFAULT_TOTAL_ORGS
+
+        except Exception as error:
+            print(f"Error getting total number of orgs {error}")
+            self.total_orgs = self.DEFAULT_TOTAL_ORGS
+
+        print(raw_text)
 
     def hover_to_org(self, num_element):
         """
@@ -98,7 +127,11 @@ class RestoreEcoScraper:
 
                 dicts_list.append(tmp_dict)
 
-        print(dicts_list)
+    def run(self):
+        """
+        Extracts
+        """
+        pass
 
 
 if __name__ == "__main__":
@@ -106,6 +139,7 @@ if __name__ == "__main__":
     restore_scraper = RestoreEcoScraper()
     restore_scraper.go_to_webpage()
     time.sleep(3)
-    restore_scraper.hover_to_org()
+    restore_scraper.get_total_number_of_orgs()
+    restore_scraper.hover_to_org(10)
     time.sleep(2)
     restore_scraper.extract_available_orgs()

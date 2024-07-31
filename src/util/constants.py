@@ -7,6 +7,7 @@ API = "https://restor2-prod-1-api.restor.eco/search/1/organizations/search?page=
 # Number of seconds to wait before a timeout error is raised
 TIMEOUT = 10
 SCROLL_PAUSE_TIME = 3
+DEFAULT_TOTAL_ORGS = 2475
 HEADERS = {
     "authority": "restor2-prod-1-api.restor.eco",
     "method": "POST",

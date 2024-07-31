@@ -10,7 +10,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.service import Service
 
 # Local imports
 from util.constants import TIMEOUT
@@ -34,32 +33,24 @@ class DriverManager:
             chrome_options.add_argument("--headless")
             # chrome_options.add_argument("--no-sandbox")
 
-        # if self.download_location:
-        prefs = {
-            "download.prompt_for_download": False,
-            "download.directory_upgrade": True,
-            "safebrowsing.enabled": False,
-            "safebrowsing.disable_download_protection": True,
-            # Set "enabled": False if you want authomatic downloads.
-            "plugins.plugins_list": [
-                {"enabled": False, "name": "Chrome PDF Viewer"}
-            ],
-        }
-
         chrome_options.add_argument("--ignore-certificate-errors")
-        chrome_options.add_experimental_option("prefs", prefs)
         chrome_options.add_argument("--start-maximized")
         chrome_options.add_argument("--disable-gpu")
-
         # chrome_options.add_argument("--window-size=%s" % WINDOW_SIZE)
+
+        # service = Service(self.download_location)
         driver_path = self.download_location
 
         print(driver_path)
         driver = Chrome(executable_path=driver_path, options=chrome_options)
+        print("Got driver successfully")
 
         return driver
 
     def get_page(self, page):
+        """
+        Navigates to a particular webpage
+        """
         self.driver.get(page)
 
     def click_by_xpath(self, xpath):

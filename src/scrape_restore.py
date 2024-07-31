@@ -3,6 +3,7 @@ Script that contains the code to scrape the Restor-Eco page
 """
 
 import os
+import time
 
 from util.constants import URL
 from util.driver_manager import DriverManager
@@ -58,3 +59,5 @@ if __name__ == "__main__":
 
     restore_scraper = RestoreEcoScraper()
     restore_scraper.go_to_webpage()
+    time.sleep(3)
+    restore_scraper.chrome_driver.scroll_down()

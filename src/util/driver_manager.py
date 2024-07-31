@@ -2,7 +2,7 @@
 # Author - Federico Dominguez Molina
 # Description - This class is used to manage the driver and browser instances
 
-
+import time
 import selenium
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome import webdriver as chrome_webdriver
@@ -12,11 +12,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 # Local imports
-from util.constants import TIMEOUT
+from util.constants import TIMEOUT, SCROLL_PAUSE_TIME
 
 
 class DriverManager:
     TIMEOUT = TIMEOUT
+    SCROLL_PAUSE_TIME = SCROLL_PAUSE_TIME
 
     def __init__(self, localtest, headless, download_location):
         self.localtest = localtest
@@ -100,11 +101,37 @@ class DriverManager:
 
         return button
 
-    def send_text(self, xpath, text):
-        # le damos click al text box
-        text_box = self.click_by_xpath(xpath)
+    def scroll_down(self):
+        """
+        Scrolls down until the bottom of the page is reached
+        """
+        # Get the initial page height
+        last_height = self.driver.execute_script(
+            "return document.body.scrollHeight"
+        )
 
-        # Mándamos 'Minatitlan'
+        while True:
+            # Scroll down to the bottom
+            self.driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);"
+            )
+
+            # Wait for new content to load
+            time.sleep(self.SCROLL_PAUSE_TIME)
+
+            # Calculate new scroll height and compare with last height
+            new_height = self.driver.execute_script(
+                "return document.body.scrollHeight"
+            )
+            if new_height == last_height:
+                break
+            last_height = new_height
+
+    def send_text(self, xpath, text):
+        """
+        Sends text through a textbox
+        """
+        text_box = self.click_by_xpath(xpath)
         text_box.send_keys(text)
 
     def get_text(self, xpath):

@@ -78,6 +78,17 @@ class DriverManager:
             self.driver.execute_script("arguments[0].click();", button)
         return button
 
+    def hover_by_xpath(self, xpath):
+        """
+        Function receives an xpath and hovers over such element
+        """
+        button = WebDriverWait(self.driver, self.TIMEOUT).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+        print("Hovering to button")
+        self.action.move_to_element(button)
+        self.action.perform()
+
     def click_by_iden(self, iden):
         """
         Función que recibe un id, un driver y lo que hace es darle click

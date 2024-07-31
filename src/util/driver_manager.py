@@ -32,12 +32,10 @@ class DriverManager:
 
         if self.headless:
             chrome_options.add_argument("--headless")
-            # chrome_options.add_argument("--no-sandbox")
 
         chrome_options.add_argument("--ignore-certificate-errors")
         chrome_options.add_argument("--start-maximized")
         chrome_options.add_argument("--disable-gpu")
-        # chrome_options.add_argument("--window-size=%s" % WINDOW_SIZE)
 
         # service = Service(self.download_location)
         driver_path = self.download_location
@@ -96,7 +94,6 @@ class DriverManager:
         WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.ID, iden))
         )
-        # button = self.driver.find_element_by_id(iden)
         try:
             button = WebDriverWait(self.driver, TIMEOUT).until(
                 EC.element_to_be_clickable((By.ID, iden))

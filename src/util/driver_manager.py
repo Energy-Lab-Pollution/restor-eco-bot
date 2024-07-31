@@ -85,7 +85,6 @@ class DriverManager:
         button = WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
-        print("Hovering to button")
         self.action.move_to_element(button)
         self.action.perform()
 

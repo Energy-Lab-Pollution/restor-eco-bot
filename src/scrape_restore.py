@@ -5,6 +5,7 @@ Script that contains the code to scrape the Restor-Eco page
 import re
 import os
 import time
+import pandas as pd
 
 from util.constants import URL, DEFAULT_TOTAL_ORGS
 from bs4 import BeautifulSoup
@@ -74,7 +75,7 @@ class RestoreEcoScraper:
             number = re.findall(r"\d+", raw_text)
 
             if number:
-                self.total_orgs = number[0]
+                self.total_orgs = int(number[0])
 
             else:
                 self.total_orgs = self.DEFAULT_TOTAL_ORGS
@@ -100,7 +101,7 @@ class RestoreEcoScraper:
         soup = BeautifulSoup(html, "html.parser")
         li_elements = soup.find_all("li")
 
-        dicts_list = []
+        self.orgs_list = []
 
         for li_element in li_elements:
             a_tag = li_element.find("a")
@@ -125,21 +126,36 @@ class RestoreEcoScraper:
                     raw_country_name = img["alt"]
                     tmp_dict["country_name"] = raw_country_name
 
-                dicts_list.append(tmp_dict)
+                self.orgs_list.append(tmp_dict)
 
     def run(self):
         """
-        Extracts
+        Extracts all the available orgs in the page
         """
-        pass
+        start = 10
+        increment = 10
+
+        self.go_to_webpage()
+        time.sleep(3)
+        restore_scraper.get_total_number_of_orgs()
+
+        # Generate number of
+        indexes = list(range(start, self.total_orgs + 1, increment))
+
+        for index in indexes:
+            self.hover_to_org(index)
+            if index % 50 == 0:
+                print(f"Done with {index} orgs")
+                time.sleep(1.5)
+
+        self.extract_available_orgs()
+
+        self.df_orgs = pd.DataFrame.from_records(self.orgs_list)
+        self.df_orgs.drop_duplicates(subset=["url"], inplace=True)
+        self.df_orgs.to_csv("eco-restor-orgs.csv", index=False)
 
 
 if __name__ == "__main__":
 
     restore_scraper = RestoreEcoScraper()
-    restore_scraper.go_to_webpage()
-    time.sleep(3)
-    restore_scraper.get_total_number_of_orgs()
-    restore_scraper.hover_to_org(10)
-    time.sleep(2)
-    restore_scraper.extract_available_orgs()
+    restore_scraper.run()

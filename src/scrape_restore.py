@@ -7,7 +7,12 @@ import os
 import time
 import pandas as pd
 
-from util.constants import URL, DEFAULT_TOTAL_ORGS
+from util.constants import (
+    URL,
+    DEFAULT_TOTAL_ORGS,
+    LOCAL_PATH_WIN,
+    LOCAL_PATH_UBUNTU,
+)
 from bs4 import BeautifulSoup
 from util.driver_manager import DriverManager
 
@@ -18,15 +23,11 @@ if "home" in current_dir:
     download_location = "/usr/bin/chromedriver"
     LOCAL_TEST = False
 elif "mnt" in current_dir:
-    download_location = (
-        "/mnt/c/Users/fdmol/Downloads/chromedriver-win32/chromedriver.exe"
-    )
+    download_location = LOCAL_PATH_UBUNTU
     LOCAL_TEST = True
 
 else:
-    download_location = (
-        "C:/Users/fdmol/Downloads/chromedriver-win32/chromedriver.exe"
-    )
+    download_location = LOCAL_PATH_WIN
     LOCAL_TEST = True
 
 

@@ -137,6 +137,7 @@ class RestoreEcoScraper:
         """
         start = 10
         increment = 10
+        threshold = 50
 
         self.go_to_webpage()
         time.sleep(3)
@@ -147,7 +148,7 @@ class RestoreEcoScraper:
 
         for index in indexes:
             self.hover_to_org(index)
-            if index % 50 == 0:
+            if index % threshold == 0:
                 print(f"Done with {index} orgs")
                 time.sleep(1.5)
 

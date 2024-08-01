@@ -2,7 +2,7 @@
 # Author - Federico Dominguez Molina
 # Description - This class is used to manage the driver and browser instances
 
-
+import time
 import selenium
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome import webdriver as chrome_webdriver
@@ -10,14 +10,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.service import Service
 
 # Local imports
-from util.constants import TIMEOUT
+from util.constants import TIMEOUT, SCROLL_PAUSE_TIME
 
 
 class DriverManager:
     TIMEOUT = TIMEOUT
+    SCROLL_PAUSE_TIME = SCROLL_PAUSE_TIME
 
     def __init__(self, localtest, headless, download_location):
         self.localtest = localtest
@@ -32,34 +32,24 @@ class DriverManager:
 
         if self.headless:
             chrome_options.add_argument("--headless")
-            # chrome_options.add_argument("--no-sandbox")
-
-        # if self.download_location:
-        prefs = {
-            "download.prompt_for_download": False,
-            "download.directory_upgrade": True,
-            "safebrowsing.enabled": False,
-            "safebrowsing.disable_download_protection": True,
-            # Set "enabled": False if you want authomatic downloads.
-            "plugins.plugins_list": [
-                {"enabled": False, "name": "Chrome PDF Viewer"}
-            ],
-        }
 
         chrome_options.add_argument("--ignore-certificate-errors")
-        chrome_options.add_experimental_option("prefs", prefs)
         chrome_options.add_argument("--start-maximized")
         chrome_options.add_argument("--disable-gpu")
 
-        # chrome_options.add_argument("--window-size=%s" % WINDOW_SIZE)
+        # service = Service(self.download_location)
         driver_path = self.download_location
 
         print(driver_path)
         driver = Chrome(executable_path=driver_path, options=chrome_options)
+        print("Got driver successfully")
 
         return driver
 
     def get_page(self, page):
+        """
+        Navigates to a particular webpage
+        """
         self.driver.get(page)
 
     def click_by_xpath(self, xpath):
@@ -86,6 +76,16 @@ class DriverManager:
             self.driver.execute_script("arguments[0].click();", button)
         return button
 
+    def hover_by_xpath(self, xpath):
+        """
+        Function receives an xpath and hovers over such element
+        """
+        button = WebDriverWait(self.driver, self.TIMEOUT).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+        self.action.move_to_element(button)
+        self.action.perform()
+
     def click_by_iden(self, iden):
         """
         Función que recibe un id, un driver y lo que hace es darle click
@@ -94,7 +94,6 @@ class DriverManager:
         WebDriverWait(self.driver, self.TIMEOUT).until(
             EC.presence_of_element_located((By.ID, iden))
         )
-        # button = self.driver.find_element_by_id(iden)
         try:
             button = WebDriverWait(self.driver, TIMEOUT).until(
                 EC.element_to_be_clickable((By.ID, iden))
@@ -109,11 +108,37 @@ class DriverManager:
 
         return button
 
-    def send_text(self, xpath, text):
-        # le damos click al text box
-        text_box = self.click_by_xpath(xpath)
+    def scroll_down(self):
+        """
+        Scrolls down until the bottom of the page is reached
+        """
+        # Get the initial page height
+        last_height = self.driver.execute_script(
+            "return document.body.scrollHeight"
+        )
 
-        # Mándamos 'Minatitlan'
+        while True:
+            # Scroll down to the bottom
+            self.driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);"
+            )
+
+            # Wait for new content to load
+            time.sleep(self.SCROLL_PAUSE_TIME)
+
+            # Calculate new scroll height and compare with last height
+            new_height = self.driver.execute_script(
+                "return document.body.scrollHeight"
+            )
+            if new_height == last_height:
+                break
+            last_height = new_height
+
+    def send_text(self, xpath, text):
+        """
+        Sends text through a textbox
+        """
+        text_box = self.click_by_xpath(xpath)
         text_box.send_keys(text)
 
     def get_text(self, xpath):

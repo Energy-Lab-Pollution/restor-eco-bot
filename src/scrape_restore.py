@@ -120,11 +120,14 @@ class RestoreEcoScraper:
                 tmp_dict["org_name"] = org_name.text
                 tmp_dict["url"] = f"https://restor.eco{href}"
                 tmp_dict["country_name"] = None
+                tmp_dict["description"] = None
 
                 if img_span:
                     img = img_span.find("img")
                     raw_country_name = img["alt"]
-                    tmp_dict["country_name"] = raw_country_name
+                    country_name = raw_country_name.replace("Flag of ", "")
+                    tmp_dict["country_name"] = country_name
+                    tmp_dict["description"] = img_span.text
 
                 self.orgs_list.append(tmp_dict)
 
@@ -139,7 +142,7 @@ class RestoreEcoScraper:
         time.sleep(3)
         restore_scraper.get_total_number_of_orgs()
 
-        # Generate number of
+        # Generate list in increments of 10
         indexes = list(range(start, self.total_orgs + 1, increment))
 
         for index in indexes:
@@ -152,7 +155,9 @@ class RestoreEcoScraper:
 
         self.df_orgs = pd.DataFrame.from_records(self.orgs_list)
         self.df_orgs.drop_duplicates(subset=["url"], inplace=True)
-        self.df_orgs.to_csv("eco-restor-orgs.csv", index=False)
+        self.df_orgs.to_csv(
+            "eco-restor-orgs.csv", index=False, encoding="utf-8-sig"
+        )
 
 
 if __name__ == "__main__":
